@@ -1,0 +1,17 @@
+route:
+  - match:
+      severity: critical
+    receiver: 'telegram'
+  - match:
+      severity: warning
+    receiver: 'debug'
+
+receivers:
+  - name: 'telegram'
+    telegram_configs:
+      - bot_token: '$BOT_TOKEN'
+        chat_id: '$CHAT_ID'
+
+  - name: 'debug'
+    webhook_configs:
+      - url: 'http://localhost:9999' #Заглушка

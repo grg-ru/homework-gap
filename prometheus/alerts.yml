@@ -1,0 +1,27 @@
+groups:
+  - name: my_alerts
+    rules:
+      - alert: SiteDown
+        expr: probe_success{job="blackbox_cms"} == 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Сайт не работает"
+          description: "Blackbox не может получить доступ к nginx"
+      - alert: MySQLDown
+        expr: mysql_up == 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "MySQL недоступен"
+          description: "MySQL exporter не отвечает"
+      - alert: SiteSlow
+        expr: probe_duration_seconds{job="blackbox_cms"} > 0.5
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Сайт тормозит"
+          description: "Время ответа больше 0.5 секунд"

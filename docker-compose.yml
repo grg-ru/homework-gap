@@ -126,10 +126,12 @@ services:
     restart: always
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=48h'
       - '--web.listen-address=:9090'
     ports:
       - "9090:9090"
@@ -154,7 +156,7 @@ services:
     command:
       - '--storageDataPath=/victoria-metrics-data'
       - '--httpListenAddr=:8428'
-      - '--retentionPeriod=30d'
+      - '--retentionPeriod=7d'
     ports:
       - "8428:8428"
     networks:
@@ -175,3 +177,14 @@ services:
       - monitoring
     depends_on:
       - victoriametrics
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    restart: always
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    networks:
+      - monitoring
